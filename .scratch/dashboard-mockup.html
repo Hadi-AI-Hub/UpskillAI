@@ -1,0 +1,659 @@
+<title>Trainer Card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Karla:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Press+Start+2P&display=swap">
+<style>
+  :root{
+    --paper:#e9e4d3;
+    --paper-deep:#ded4b8;
+    --card:#f7f3e6;
+    --card-2:#fdfbf3;
+    --line:#c9bfa0;
+    --ink:#241f15;
+    --ink-dim:#6b6250;
+    --ember:#d1480f;
+    --ember-2:#b23d0c;
+    --spark:#e0a000;
+    --hp-good:#3f8f5f;
+    --hp-good-bg:#dcead9;
+    --hp-warn:#b8860b;
+    --hp-warn-bg:#f4e6c6;
+    --hp-bad:#a13a3a;
+    --hp-bad-bg:#f2dcdc;
+    --locked:#8a8371;
+    --locked-bg:#ded4b8;
+    --shadow: 0 1px 0 rgba(36,31,21,0.06);
+    --font-display:'Zilla Slab', ui-serif, Georgia, serif;
+    --font-body:'Karla', ui-sans-serif, system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-pixel:'Press Start 2P', monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#17150f; --paper-deep:#1f1b12; --card:#201c14; --card-2:#262217;
+      --line:#3a3323; --ink:#ece6d4; --ink-dim:#a89f8a;
+      --ember:#ff7a2e; --ember-2:#e8590c; --spark:#ffcc33;
+      --hp-good:#59c98a; --hp-good-bg:#17301f; --hp-warn:#e0a83c; --hp-warn-bg:#3a2f14; --hp-bad:#e0615f; --hp-bad-bg:#3a1f1f;
+      --locked:#5c5544; --locked-bg:#26221a; --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17150f; --paper-deep:#1f1b12; --card:#201c14; --card-2:#262217;
+    --line:#3a3323; --ink:#ece6d4; --ink-dim:#a89f8a;
+    --ember:#ff7a2e; --ember-2:#e8590c; --spark:#ffcc33;
+    --hp-good:#59c98a; --hp-good-bg:#17301f; --hp-warn:#e0a83c; --hp-warn-bg:#3a2f14; --hp-bad:#e0615f; --hp-bad-bg:#3a1f1f;
+    --locked:#5c5544; --locked-bg:#26221a; --shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
+  body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
+
+  .pixel{ font-family:var(--font-pixel); font-size:0.52rem; letter-spacing:0.03em; }
+  .eyebrow{ font-family:var(--font-pixel); font-size:0.52rem; color:var(--ember); letter-spacing:0.04em; }
+  h1,h2,h3{ font-family:var(--font-display); font-weight:700; margin:0; text-wrap:balance; }
+  .num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+
+  /* ============ app shell ============ */
+  .app{ height:100vh; display:flex; flex-direction:column; max-width:1080px; margin:0 auto; padding:0 1.5rem 1rem; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:0.85rem 0 0.65rem; flex:none;
+  }
+  .brand{ display:flex; align-items:baseline; gap:0.55rem; }
+  .brand .eyebrow{ font-size:0.5rem; }
+  .brand h1{ font-size:1.15rem; }
+  .top-stats{ display:flex; align-items:center; gap:1.1rem; }
+  .streak-chip{ display:flex; align-items:center; gap:0.4rem; }
+  .streak-chip .flame{ width:19px; height:19px; flex:none; }
+  .streak-chip .n{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; }
+  .top-divider{ width:1px; height:22px; background:var(--line); }
+  .lv-block{ display:flex; align-items:center; gap:0.5rem; }
+  .lv-pill{ font-family:var(--font-pixel); font-size:0.55rem; color:#fff; background:var(--ember); border-radius:5px; padding:0.3rem 0.45rem; white-space:nowrap; }
+  .xp-mini{ width:76px; }
+  .bar-track{ height:7px; border-radius:999px; background:var(--paper-deep); overflow:hidden; border:1px solid var(--line); }
+  .bar-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg, var(--ember-2), var(--spark)); }
+  .xp-mini .lbl{ font-family:var(--font-mono); font-size:0.6rem; color:var(--ink-dim); margin-top:0.2rem; text-align:right; }
+
+  /* ============ tabs ============ */
+  .tabs{ display:flex; gap:0.4rem; flex:none; margin-bottom:0.85rem; }
+  .tab-btn{
+    font-family:var(--font-body); font-weight:600; font-size:0.82rem; color:var(--ink-dim);
+    background:transparent; border:1px solid var(--line); border-radius:999px; padding:0.42rem 1rem;
+    cursor:pointer;
+  }
+  .tab-btn:hover{ color:var(--ink); }
+  .tab-btn:focus-visible{ outline:2px solid var(--ember); outline-offset:2px; }
+  .tab-btn.active{ background:var(--ember); border-color:var(--ember); color:#fff; }
+
+  main.panels{ flex:1; min-height:0; overflow:hidden; }
+  .panel{ height:100%; display:flex; flex-direction:column; gap:0.7rem; overflow:auto; }
+
+  /* ============ TODAY panel: preview controls ============ */
+  .preview-strip{ flex:none; display:flex; align-items:center; justify-content:flex-end; gap:1.1rem; flex-wrap:wrap; row-gap:0.3rem; }
+  .preview-strip > .pixel{ color:var(--ink-dim); }
+  .preview-group{ display:flex; align-items:center; gap:0.4rem; }
+  .pg-label{ font-family:var(--font-mono); font-size:0.64rem; color:var(--ink-dim); }
+  .preview-btns{ display:flex; gap:0.3rem; flex-wrap:wrap; }
+  .pstate-btn{
+    font-family:var(--font-mono); font-size:0.65rem; padding:0.22rem 0.55rem; border-radius:999px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-dim); cursor:pointer;
+  }
+  .pstate-btn:hover{ color:var(--ink); }
+  .pstate-btn:focus-visible{ outline:2px solid var(--ember); outline-offset:2px; }
+  .pstate-btn.active{ background:var(--c, var(--ember)); border-color:var(--c, var(--ember)); color:#fff; }
+
+  /* ============ TODAY panel: hero ============ */
+  .hero-row{ flex:1.55; min-height:0; }
+  .buddy-card{
+    height:100%; background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:1rem 1.4rem; display:flex; align-items:center; gap:1.5rem;
+  }
+  .screen{
+    position:relative; background:radial-gradient(circle at 45% 35%, var(--card-2), var(--paper-deep));
+    border-radius:10px; border:1px solid var(--line); width:250px; height:250px; flex:none;
+    display:flex; align-items:flex-end; justify-content:center; cursor:pointer; overflow:hidden;
+  }
+  .screen::before, .screen::after, .screen .tick-br, .screen .tick-bl{ content:""; position:absolute; width:9px; height:9px; z-index:2; }
+  .screen::before{ top:5px; left:5px; border-top:2px solid var(--ember); border-left:2px solid var(--ember); opacity:0.5; }
+  .screen::after{ top:5px; right:5px; border-top:2px solid var(--ember); border-right:2px solid var(--ember); opacity:0.5; }
+  .screen .tick-bl{ bottom:5px; left:5px; border-bottom:2px solid var(--ember); border-left:2px solid var(--ember); opacity:0.5; }
+  .screen .tick-br{ bottom:5px; right:5px; border-bottom:2px solid var(--ember); border-right:2px solid var(--ember); opacity:0.5; }
+  .buddy-pic{ display:block; width:226px; height:226px; margin-bottom:12px; position:relative; z-index:1; }
+  #buddyImg{
+    display:block; width:226px; height:226px; object-fit:contain; object-position:center bottom;
+    transform-origin:50% 100%; user-select:none; -webkit-user-drag:none;
+    filter:drop-shadow(0 6px 6px rgba(36,31,21,0.22));
+  }
+  #buddyImg[data-anim="breathe"]{ animation:breathe 3.2s ease-in-out infinite; }
+  #buddyImg[data-anim="bounce"]{ animation:bounce 0.9s cubic-bezier(.3,.9,.4,1) infinite; }
+  #buddyImg[data-anim="tremble"]{ animation:tremble 1.6s ease-in-out infinite; }
+  #buddyImg[data-anim="none"]{ animation:none; filter:drop-shadow(0 4px 4px rgba(36,31,21,0.18)) saturate(0.85); }
+  #buddyImg.pop{ animation:pop 0.42s cubic-bezier(.34,1.56,.64,1) 1, var(--idle, none); }
+  #buddyImg.pop[data-anim="breathe"]{ --idle: breathe 3.2s ease-in-out 0.42s infinite; }
+  #buddyImg.pop[data-anim="bounce"]{ --idle: bounce 0.9s cubic-bezier(.3,.9,.4,1) 0.42s infinite; }
+  #buddyImg.pop[data-anim="tremble"]{ --idle: tremble 1.6s ease-in-out 0.42s infinite; }
+  @keyframes breathe{ 0%,100%{ transform:scale(1,1); } 50%{ transform:scale(1.015,1.035); } }
+  @keyframes bounce{ 0%,100%{ transform:translateY(0) scale(1.02,0.98); } 40%{ transform:translateY(-14px) scale(0.98,1.03); } 60%{ transform:translateY(-14px) scale(0.98,1.03); } }
+  @keyframes tremble{ 0%,100%{ transform:rotate(0deg); } 25%{ transform:rotate(-1.6deg); } 75%{ transform:rotate(1.6deg); } }
+  @keyframes pop{ 0%{ transform:scale(0.86,1.1); } 55%{ transform:scale(1.08,0.94); } 100%{ transform:scale(1,1); } }
+  .screen.is-scene .buddy-pic{ width:250px; height:250px; margin:0; }
+  .screen.is-scene #buddyImg{ width:250px; height:250px; object-fit:cover; object-position:center bottom; filter:none; border-radius:9px; }
+  .screen.mood-celebrating{ background:radial-gradient(circle at 50% 40%, #fff6c4, var(--paper-deep)); }
+  .screen.mood-worried{ background:radial-gradient(circle at 45% 35%, var(--card-2), var(--hp-warn-bg)); }
+  .screen.mood-battered{ background:radial-gradient(circle at 45% 35%, #eee9df, #d9d2c2); }
+  @media (prefers-reduced-motion: reduce){ #buddyImg{ animation:none !important; } }
+
+  .buddy-meta{ flex:1; min-width:0; display:flex; flex-direction:column; gap:0.42rem; }
+  .buddy-meta h2{ font-size:1.3rem; }
+  .name-editable{ cursor:pointer; border-bottom:1px dashed var(--line); display:inline-block; }
+  .name-editable:hover{ border-bottom-color:var(--ember); }
+  #nameInput{ font-family:var(--font-display); font-weight:700; font-size:1.3rem; width:9ch; background:var(--card-2); border:1px solid var(--ember); border-radius:4px; color:var(--ink); padding:0 0.2rem; }
+  .buddy-meta .stage{ font-size:0.76rem; color:var(--ink-dim); margin-top:-0.3rem; }
+  .voice-line{ font-style:italic; font-size:0.78rem; color:var(--ink-dim); min-height:2.1em; line-height:1.4; display:flex; align-items:center; }
+  .hp-row{ display:flex; align-items:center; gap:0.5rem; }
+  .hp-word{ font-family:var(--font-mono); font-size:0.7rem; color:var(--hp-good); text-transform:uppercase; letter-spacing:0.05em; margin-left:auto; }
+  .hp-track{ height:8px; border-radius:999px; background:var(--paper-deep); border:1px solid var(--line); overflow:hidden; }
+  .hp-fill{ height:100%; background:var(--hp-good); width:100%; transition:width 0.4s ease, background 0.3s ease; }
+
+  .moveset{ display:flex; gap:0.4rem; flex-wrap:wrap; }
+  .move-tag{
+    position:relative; font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.02em;
+    color:var(--ember); border:1px solid var(--ember); border-radius:5px; padding:0.15rem 0.45rem;
+    text-transform:uppercase; background:var(--card-2);
+  }
+  .move-tag .new-dot{
+    position:absolute; top:-3px; right:-3px; width:7px; height:7px; border-radius:50%;
+    background:var(--spark); animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
+  @media (prefers-reduced-motion: reduce){ .move-tag .new-dot{ animation:none; } }
+
+  .today-chip{
+    display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:var(--ink);
+    background:var(--hp-good-bg); border:1px solid var(--hp-good); border-radius:999px;
+    padding:0.35rem 0.8rem; width:fit-content; transition:background 0.3s ease, border-color 0.3s ease;
+  }
+  .today-chip .dot{ width:6px; height:6px; border-radius:50%; background:var(--hp-good); flex:none; }
+  .today-chip .num{ color:var(--ink-dim); }
+
+  /* stat strip */
+  .stat-row{ flex:0.5; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); gap:0.7rem; }
+  .stat-tile{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+  }
+  .stat-tile .v{ font-family:var(--font-display); font-weight:700; font-size:1.35rem; }
+  .stat-tile .l{ font-size:0.62rem; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.15rem; }
+
+  /* field guide strip */
+  .fg-row{ flex:0.9; min-height:0; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:0.7rem 1.1rem; display:flex; flex-direction:column; gap:0.4rem; }
+  .fg-head{ display:flex; align-items:baseline; justify-content:space-between; }
+  .fg-head h3{ font-size:0.95rem; }
+  .fg-head .hint{ font-size:0.68rem; color:var(--ink-dim); }
+  .fg-items{ flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); gap:0.8rem; }
+  .fg-item{ display:flex; align-items:center; gap:0.6rem; min-width:0; }
+  .fg-ring{ flex:none; }
+  .fg-item .txt{ min-width:0; }
+  .fg-item .name{ font-size:0.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fg-item .meta{ font-family:var(--font-mono); font-size:0.66rem; color:var(--ink-dim); }
+  .fg-item .flag{ display:inline-block; font-size:0.6rem; color:var(--hp-warn); margin-top:0.1rem; }
+
+  /* ============ MISSION panel ============ */
+  .mission-head{ flex:none; }
+  .mission-head h2{ font-size:1.25rem; }
+  .mission-head p{ margin:0.25rem 0 0; font-size:0.82rem; color:var(--ink-dim); max-width:62ch; }
+  .badge-area{ flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:1.4rem; }
+  .badge-row{ display:flex; justify-content:center; gap:1.3rem; }
+  .badge{ width:120px; text-align:center; }
+  .hex{
+    width:92px; height:80px; margin:0 auto 0.5rem; position:relative;
+    clip-path:polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+    background:var(--locked-bg); border:1px solid var(--line);
+  }
+  .badge.active .hex{ background:var(--paper-deep); border-color:var(--ember); }
+  .hex .fill{ position:absolute; bottom:0; left:0; width:100%; background:linear-gradient(180deg, var(--spark), var(--ember-2)); }
+  .hex .n{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-pixel); font-size:0.9rem; color:var(--locked); }
+  .badge.active .hex .n{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,0.35); }
+  .badge .name{ font-size:0.8rem; font-weight:600; }
+  .badge .pct{ font-family:var(--font-mono); font-size:0.72rem; color:var(--ember); margin-top:0.1rem; }
+  .badge .pct.locked{ color:var(--locked); }
+  .focus-note{
+    text-align:center; font-size:0.85rem; color:var(--ink-dim); max-width:64ch; margin:0 auto;
+  }
+  .focus-note strong{ color:var(--ink); font-weight:600; }
+
+  /* ============ LOG panel ============ */
+  .log-grid{ flex:1; min-height:0; display:grid; grid-template-columns:1.1fr 0.9fr; gap:1rem; }
+  .log-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem 1.3rem; display:flex; flex-direction:column; min-height:0; }
+  .log-card h3{ font-size:0.95rem; flex:none; }
+  .heatmap{
+    flex:1; min-height:0; display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 1fr);
+    grid-template-columns:repeat(12, 1fr); gap:4px; margin:0.8rem 0;
+  }
+  .heatmap .cell{ border-radius:3px; background:var(--paper-deep); }
+  .heatmap .cell.filled{ background:var(--ember); }
+  .heatmap .cell.today{ outline:2px solid var(--spark); outline-offset:1px; }
+  .heatmap-legend{ flex:none; display:flex; align-items:center; gap:0.4rem; font-size:0.72rem; color:var(--ink-dim); }
+  .heatmap-legend .sw{ width:10px; height:10px; border-radius:2px; }
+
+  .bars{ flex:1; min-height:0; display:flex; align-items:flex-end; gap:1.3rem; position:relative; padding-top:1.6rem; margin-top:0.4rem; }
+  .target-line{ position:absolute; left:0; right:0; border-top:1.5px dashed var(--ink-dim); opacity:0.6; }
+  .target-line span{ position:absolute; right:0; top:-1.15rem; font-family:var(--font-mono); font-size:0.66rem; color:var(--ink-dim); }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .bar-val{ font-family:var(--font-mono); font-size:0.72rem; color:var(--ink); margin-bottom:0.3rem; }
+  .bar-shape{ width:58%; background:linear-gradient(180deg, var(--spark), var(--ember-2)); border-radius:4px 4px 0 0; }
+  .bar-date{ font-family:var(--font-mono); font-size:0.68rem; color:var(--ink-dim); margin-top:0.4rem; }
+
+  .foot-note{ flex:none; font-size:0.68rem; color:var(--ink-dim); margin-top:0.4rem; }
+
+  @media (max-width:760px){
+    .fg-items, .stat-row{ grid-template-columns:repeat(2,1fr); }
+    .log-grid{ grid-template-columns:1fr; }
+    .badge-row{ flex-wrap:wrap; }
+  }
+</style>
+
+<div class="app">
+
+  <!-- persistent top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">UPSKILLAI</div>
+      <h1>Trainer Card</h1>
+    </div>
+    <div class="top-stats">
+      <div class="streak-chip">
+        <svg class="flame" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2 C9 6 6 8.2 6 12.3 C6 16.9 8.9 19.5 12 19.5 C15.1 19.5 18 16.9 18 12.3 C18 9.6 16.6 7.7 15.1 6.2 C15.4 8 14.6 9.4 13.4 9.9 C13.9 7.3 13.1 4.2 12 2 Z" fill="var(--ember)"/>
+          <path d="M12 9.5 C10.8 11.2 10 12.4 10 13.9 C10 15.7 11 16.8 12 16.8 C13 16.8 14 15.7 14 13.9 C14 12.7 13.4 11.9 12.8 11.1 C12.9 11.9 12.5 12.5 12 12.7 C12.2 11.6 12.5 10.5 12 9.5 Z" fill="var(--spark)"/>
+        </svg>
+        <span class="n num">3</span>
+      </div>
+      <div class="top-divider"></div>
+      <div class="lv-block">
+        <span class="lv-pill">LV.3</span>
+        <div class="xp-mini">
+          <div class="bar-track"><div class="bar-fill" style="width:27%"></div></div>
+          <div class="lbl">182 XP</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- tabs -->
+  <nav class="tabs" role="tablist" aria-label="Dashboard sections">
+    <button class="tab-btn active" role="tab" aria-selected="true" data-tab="today">Today</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="mission">Mission</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="log">Log</button>
+  </nav>
+
+  <main class="panels">
+
+    <!-- ============ TODAY ============ -->
+    <section class="panel" id="panel-today" role="tabpanel">
+
+      <div class="preview-strip">
+        <span class="pixel">PREVIEW (design review only)</span>
+        <div class="preview-group">
+          <span class="pg-label">MOOD</span>
+          <div class="preview-btns" id="moodBtns">
+            <button class="pstate-btn" data-mood="celebrating" style="--c:var(--hp-good)">Celebrating</button>
+            <button class="pstate-btn active" data-mood="thriving" style="--c:var(--hp-good)">Thriving</button>
+            <button class="pstate-btn" data-mood="neutral" style="--c:var(--ink-dim)">Ready</button>
+            <button class="pstate-btn" data-mood="worried" style="--c:var(--hp-warn)">Worried</button>
+            <button class="pstate-btn" data-mood="battered" style="--c:var(--hp-bad)">Knocked out</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-row">
+        <div class="buddy-card">
+          <div class="screen" id="buddyScreen" title="Click me">
+            <div class="tick-bl"></div><div class="tick-br"></div>
+            <picture class="buddy-pic">
+              <source id="buddyImgWebp" type="image/webp" srcset="../assets/mascot/thriving.webp">
+              <img id="buddyImg" src="../assets/mascot/thriving.png" alt="Buddy, thriving" width="226" height="226" draggable="false">
+            </picture>
+          </div>
+
+          <div class="buddy-meta">
+            <h2><span id="buddyName" class="name-editable" title="Click to rename">Sparky</span></h2>
+            <p class="stage" id="stageCaption">Lv. 3 &middot; 13% of the mission learned</p>
+            <p class="voice-line" id="voiceLine">3-day streak &mdash; your longest yet. Let's stretch it.</p>
+            <div class="hp-row"><span class="pixel" id="hpTag">HEALTH</span><span class="hp-word" id="hpWord">Thriving</span></div>
+            <div class="hp-track"><div class="hp-fill" id="hpFill"></div></div>
+            <div class="moveset">
+              <span class="move-tag">GROUPBY</span>
+              <span class="move-tag">SELECT/FILTER</span>
+              <span class="move-tag">JOIN</span>
+              <span class="move-tag">WINDOW FNS<span class="new-dot"></span></span>
+            </div>
+            <div class="today-chip" id="todayChip"><span class="dot" id="chipDot"></span><span id="chipText">Today logged &middot; <span class="num">58 min</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile"><span class="v num">3</span><span class="l">Current streak</span></div>
+        <div class="stat-tile"><span class="v num">3</span><span class="l">Longest streak</span></div>
+        <div class="stat-tile"><span class="v num">3</span><span class="l">Days trained</span></div>
+        <div class="stat-tile"><span class="v num">3h 02m</span><span class="l">Total time</span></div>
+      </div>
+
+      <div class="fg-row">
+        <div class="fg-head">
+          <h3>Field guide &mdash; recall</h3>
+          <span class="hint">fades 14 days after last practiced &middot; see Mission for the full skill list</span>
+        </div>
+        <div class="fg-items">
+
+          <div class="fg-item">
+            <svg class="fg-ring" width="38" height="38" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--paper-deep)" stroke-width="4"/>
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--ember)" stroke-width="4" stroke-dasharray="86.4 100.5" stroke-linecap="round" transform="rotate(-90 19 19)"/>
+              <text x="19" y="23" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--ink)">86</text>
+            </svg>
+            <div class="txt"><div class="name">groupBy</div><div class="meta">2d ago</div></div>
+          </div>
+
+          <div class="fg-item">
+            <svg class="fg-ring" width="38" height="38" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--paper-deep)" stroke-width="4"/>
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--ember)" stroke-width="4" stroke-dasharray="93.5 100.5" stroke-linecap="round" transform="rotate(-90 19 19)"/>
+              <text x="19" y="23" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--ink)">93</text>
+            </svg>
+            <div class="txt"><div class="name">Select/Filter</div><div class="meta">1d ago</div></div>
+          </div>
+
+          <div class="fg-item">
+            <svg class="fg-ring" width="38" height="38" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--paper-deep)" stroke-width="4"/>
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--ember)" stroke-width="4" stroke-dasharray="100.5 100.5" stroke-linecap="round" transform="rotate(-90 19 19)"/>
+              <text x="19" y="23" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--ink)">100</text>
+            </svg>
+            <div class="txt"><div class="name">Join</div><div class="meta">today</div></div>
+          </div>
+
+          <div class="fg-item">
+            <svg class="fg-ring" width="38" height="38" viewBox="0 0 38 38">
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--paper-deep)" stroke-width="4"/>
+              <circle cx="19" cy="19" r="16" fill="none" stroke="var(--ember)" stroke-width="4" stroke-dasharray="100.5 100.5" stroke-linecap="round" transform="rotate(-90 19 19)"/>
+              <text x="19" y="23" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--ink)">100</text>
+            </svg>
+            <div class="txt"><div class="name">Window fns</div><div class="meta">today</div><span class="flag">needs reps</span></div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============ MISSION ============ -->
+    <section class="panel" id="panel-mission" role="tabpanel" hidden>
+      <div class="mission-head">
+        <div class="eyebrow">GYM BADGES</div>
+        <h2>Mission progress</h2>
+        <p>The six success criteria from <code style="font-family:var(--font-mono)">MISSION.md</code>. Badges fill as skills solidify &mdash; they don't just unlock.</p>
+      </div>
+
+      <div class="badge-area">
+        <div class="badge-row">
+          <div class="badge active">
+            <div class="hex"><div class="fill" style="height:78%"></div><div class="n">1</div></div>
+            <div class="name">DataFrame API</div>
+            <div class="pct">78%</div>
+          </div>
+          <div class="badge">
+            <div class="hex"><div class="n">2</div></div>
+            <div class="name">Why It's Slow</div>
+            <div class="pct locked">Locked</div>
+          </div>
+          <div class="badge">
+            <div class="hex"><div class="n">3</div></div>
+            <div class="name">Merge Conflict</div>
+            <div class="pct locked">Locked</div>
+          </div>
+          <div class="badge">
+            <div class="hex"><div class="n">4</div></div>
+            <div class="name">Legacy Code</div>
+            <div class="pct locked">Locked</div>
+          </div>
+          <div class="badge">
+            <div class="hex"><div class="n">5</div></div>
+            <div class="name">Architecture</div>
+            <div class="pct locked">Locked</div>
+          </div>
+          <div class="badge">
+            <div class="hex"><div class="n">6</div></div>
+            <div class="name">Modular Python</div>
+            <div class="pct locked">Locked</div>
+          </div>
+        </div>
+
+        <p class="focus-note">Currently training: <strong>DataFrame API (78%)</strong> &mdash; select, filter, groupBy, agg and joins are solid; window functions landed but you asked to keep drilling them before this one locks in.</p>
+      </div>
+    </section>
+
+    <!-- ============ LOG ============ -->
+    <section class="panel" id="panel-log" role="tabpanel" hidden>
+      <div class="log-grid">
+        <div class="log-card">
+          <h3>12-week calendar</h3>
+          <div class="heatmap" id="heatmap" aria-hidden="true"></div>
+          <div class="heatmap-legend"><span class="sw" style="background:var(--paper-deep)"></span> none <span class="sw" style="background:var(--ember); margin-left:0.6rem;"></span> logged <span style="margin-left:0.6rem;">ring = today</span></div>
+        </div>
+
+        <div class="log-card">
+          <h3>Minutes per session</h3>
+          <div class="bars">
+            <div class="target-line" style="bottom:calc(30 / 70 * 100%)"><span>target 30m</span></div>
+            <div class="bar-col"><span class="bar-val">61m</span><div class="bar-shape" style="height:calc(61 / 70 * 100%)"></div><span class="bar-date">9/12</span></div>
+            <div class="bar-col"><span class="bar-val">63m</span><div class="bar-shape" style="height:calc(63 / 70 * 100%)"></div><span class="bar-date">9/13</span></div>
+            <div class="bar-col"><span class="bar-val">58m</span><div class="bar-shape" style="height:calc(58 / 70 * 100%)"></div><span class="bar-date">9/14</span></div>
+          </div>
+          <p class="foot-note">You're consistently ~2x your 30-min target.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  (function () {
+    var tabs = document.querySelectorAll('.tab-btn');
+    var panels = { today: document.getElementById('panel-today'), mission: document.getElementById('panel-mission'), log: document.getElementById('panel-log') };
+    tabs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        tabs.forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
+        Object.keys(panels).forEach(function (key) { panels[key].hidden = key !== btn.dataset.tab; });
+      });
+    });
+
+    // Fixed "today" so this mockup renders identically whenever it's opened.
+    var TODAY = new Date(2026, 8, 14); // Sep 14 2026
+    var completed = new Set(['2026-09-12', '2026-09-13', '2026-09-14']);
+    var WEEKS = 12;
+    function fmt(d) {
+      var y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+    var start = new Date(TODAY);
+    start.setDate(start.getDate() - (WEEKS * 7 - 1));
+    start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+    var todayIso = fmt(TODAY);
+    var container = document.getElementById('heatmap');
+    var day = new Date(start);
+    while (day <= TODAY) {
+      var iso = fmt(day);
+      var cell = document.createElement('div');
+      cell.className = 'cell' + (completed.has(iso) ? ' filled' : '') + (iso === todayIso ? ' today' : '');
+      cell.title = iso;
+      container.appendChild(cell);
+      day.setDate(day.getDate() + 1);
+    }
+  })();
+
+  // ---- buddy: illustrated mascot, one image per emotional state, driven by streak state ----
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var screenEl = document.getElementById('buddyScreen');
+    var imgEl = document.getElementById('buddyImg');
+    var srcEl = document.getElementById('buddyImgWebp');
+    var hpFill = document.getElementById('hpFill');
+    var hpWord = document.getElementById('hpWord');
+    var chipEl = document.getElementById('todayChip');
+    var chipText = document.getElementById('chipText');
+    var voiceEl = document.getElementById('voiceLine');
+    var stageCaptionEl = document.getElementById('stageCaption');
+    var voiceIndex = 0;
+    var currentVoice = [];
+
+    // ---- real data (matches Mission tab) ----
+    var BADGE_PCTS = [78, 0, 0, 0, 0, 0];
+    var MISSION_PCT = Math.round(BADGE_PCTS.reduce(function (a, b) { return a + b; }, 0) / BADGE_PCTS.length);
+    var STREAK = 3;
+    var ASSET_DIR = '../assets/mascot/';
+
+    // Mapping from Layer 0's derived state to a mood:
+    //   just logged today        -> celebrating (transient, settles to thriving)
+    //   active + today logged    -> thriving
+    //   active, not yet logged   -> neutral
+    //   grace                    -> worried
+    //   broken                   -> battered
+    var MOOD_ORDER = ['celebrating', 'thriving', 'neutral', 'worried', 'battered'];
+    var MOOD_META = {
+      celebrating: { word: 'Charged up', color: 'var(--hp-good)', pct: 100, anim: 'bounce', scene: true,
+        chip: { text: 'Today logged · 58 min', border: 'var(--hp-good)', bg: 'var(--hp-good-bg)' },
+        voice: [
+          'Day ' + STREAK + ' in the books. Full charge!',
+          'That was a big one. Same time tomorrow?'
+        ] },
+      thriving: { word: 'Thriving', color: 'var(--hp-good)', pct: 100, anim: 'breathe',
+        chip: { text: 'Today logged · 58 min', border: 'var(--hp-good)', bg: 'var(--hp-good-bg)' },
+        voice: [
+          STREAK + '-day streak — the most consistent we have ever been.',
+          'You keep doubling your 30-minute target. Sparks flying.',
+          'Four moves learned so far: groupBy, select/filter, join, window functions.'
+        ] },
+      neutral: { word: 'Ready', color: 'var(--ink-dim)', pct: 80, anim: 'breathe',
+        chip: { text: 'Not logged yet today — let\'s train', border: 'var(--line)', bg: 'var(--card-2)' },
+        voice: [
+          'Streak is safe until midnight. What are we learning today?',
+          'I am warmed up whenever you are.'
+        ] },
+      worried: { word: 'Worried', color: 'var(--hp-warn)', pct: 45, anim: 'tremble',
+        chip: { text: 'Missed yesterday — log today to keep the streak', border: 'var(--hp-warn)', bg: 'var(--hp-warn-bg)' },
+        voice: [
+          'One day missed. Today still saves the streak.',
+          'A little shaky, not lost. Come back today.'
+        ] },
+      battered: { word: 'Knocked out', color: 'var(--hp-bad)', pct: 0, anim: 'none', scene: true,
+        chip: { text: 'Streak broken — log today to start a new one', border: 'var(--hp-bad)', bg: 'var(--hp-bad-bg)' },
+        voice: [
+          'Two days without training. Nothing learned was undone, though.',
+          'Log today and I am back on my feet.'
+        ] }
+    };
+
+    var currentMood = 'thriving';
+    try {
+      var q = new URLSearchParams(location.search).get('mood');
+      if (q && MOOD_META[q]) currentMood = q;
+    } catch (e) {}
+
+    function setImage(mood) {
+      srcEl.srcset = ASSET_DIR + mood + '.webp';
+      imgEl.src = ASSET_DIR + mood + '.png';
+      imgEl.alt = 'Buddy, ' + MOOD_META[mood].word.toLowerCase();
+    }
+
+    function applyMood(mood) {
+      var m = MOOD_META[mood];
+      var changed = mood !== currentMood;
+      currentMood = mood;
+
+      MOOD_ORDER.forEach(function (k) { screenEl.classList.remove('mood-' + k); });
+      screenEl.classList.add('mood-' + mood);
+      screenEl.classList.toggle('is-scene', !!m.scene);
+      imgEl.dataset.anim = reduceMotion ? 'none' : m.anim;
+      if (changed && !reduceMotion) {
+        imgEl.classList.remove('pop');
+        void imgEl.offsetWidth;
+        imgEl.classList.add('pop');
+      }
+      setImage(mood);
+
+      stageCaptionEl.textContent = 'Lv. ' + STREAK + ' · ' + MISSION_PCT + '% of the mission learned';
+      hpFill.style.width = m.pct + '%';
+      hpFill.style.background = m.color;
+      hpWord.textContent = m.word;
+      hpWord.style.color = m.color;
+      document.getElementById('hpTag').style.color = m.color;
+      chipText.textContent = m.chip.text;
+      chipEl.style.borderColor = m.chip.border;
+      chipEl.style.background = m.chip.bg;
+      document.getElementById('chipDot').style.background = m.color;
+
+      currentVoice = m.voice;
+      voiceIndex = 0;
+      voiceEl.textContent = currentVoice[0];
+
+      document.querySelectorAll('#moodBtns .pstate-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.mood === mood); });
+    }
+
+    // Warm the cache so state switches don't flash.
+    MOOD_ORDER.forEach(function (k) { var i = new Image(); i.src = ASSET_DIR + k + '.png'; });
+
+    applyMood(currentMood);
+
+    document.querySelectorAll('#moodBtns .pstate-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { applyMood(btn.dataset.mood); });
+    });
+
+    screenEl.addEventListener('click', function () {
+      if (!currentVoice.length) return;
+      voiceIndex = (voiceIndex + 1) % currentVoice.length;
+      voiceEl.textContent = currentVoice[voiceIndex];
+      if (!reduceMotion) {
+        imgEl.classList.remove('pop');
+        void imgEl.offsetWidth;
+        imgEl.classList.add('pop');
+      }
+    });
+
+    // click-to-rename, persisted per-browser only (feature-detected)
+    var nameEl = document.getElementById('buddyName');
+    function attachNameHandler(el) {
+      el.addEventListener('click', function () {
+        var current = el.textContent;
+        var input = document.createElement('input');
+        input.id = 'nameInput';
+        input.value = current;
+        input.maxLength = 14;
+        el.replaceWith(input);
+        input.focus();
+        input.select();
+        function commit() {
+          var val = (input.value || '').trim() || current;
+          var span = document.createElement('span');
+          span.id = 'buddyName';
+          span.className = 'name-editable';
+          span.title = 'Click to rename';
+          span.textContent = val;
+          input.replaceWith(span);
+          try { localStorage.setItem('upskill_buddy_name', val); } catch (e) {}
+          attachNameHandler(span);
+        }
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', function (e) { if (e.key === 'Enter') input.blur(); });
+      });
+    }
+    attachNameHandler(nameEl);
+    try {
+      var savedName = localStorage.getItem('upskill_buddy_name');
+      if (savedName) nameEl.textContent = savedName;
+    } catch (e) {}
+  })();
+</script>

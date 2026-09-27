@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+# -m (not a bare script path) so layer0's own `from layer0...` imports resolve.
+exec python3 -m layer0.cli "$@"

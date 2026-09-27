@@ -1,0 +1,5 @@
+# Completion is content-based, not quiz-gated
+
+The boolean that drives the streak (`completed`) is satisfied by a `/teach` session reaching its own defined endpoint (all of a day's material chunks worked through) — not by passing an exercise. A quiz-gated model (pass threshold on end-of-material questions) was the original working assumption and was deliberately rejected after research into comparable systems: Duolingo's own published data shows that raising the bar to extend a streak *reduced* streak retention, and hard assessment gates carry documented quiz-fatigue and false-negative-on-partial-understanding risk — both worse in a solo, instructor-less system than in a classroom where a human can intervene on a bad result. Exercise results (quiz/recall/hands-on) are still captured on the log line, but purely as diagnostic metadata for Layer 1 to read back and adjust future material — never as a gate. Revisit only if 30 days of dogfooding shows the low bar is being gamed (the exact failure mode Duolingo's own users are documented to exhibit).
+
+See `.scratch/upskill-streak-system/research/completion-models.md` for the full analysis and sources.
